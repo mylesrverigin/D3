@@ -1,3 +1,5 @@
+import {d3} from "./tables/tables.js";
+
 class D3Calc {
     constructor(){
         this.distanceFinal = false;
@@ -91,9 +93,37 @@ class D3Calc {
         /* gets value of amps */
         return this.amps;
     }
-    
+
     getBreaker() {
         /* gets value of breaker */
         return this.breaker;
     }
+
+    voltageCalc() {
+        /* Calculates the voltage multiplier for equation */
+        return this.voltage/120;
+    }
+
+    d3row() {
+        /* Calculates the row key of d3 table to use */
+        if (!this.amps) {
+            return false;
+        }
+        var firstIndex = 0;
+        for (let i=0;i<d3['index'].length;i++){
+            const value = d3['index'][i];
+            if (value > this.amps){
+                firstIndex += i;
+                break;
+            }
+        }
+        // makes d3 row key based on index lower and higher then value
+        return [d3['index'][firstIndex-1],d3['index'][firstIndex]];
+    }
+    //  next step make the calculation using a stand in dcf
+    //  when theres a working awg use a real dcf 
+    // start at smallest awg and work up
 }
+var temp = new D3Calc();
+temp.setAmps(34);
+console.log(temp.d3row());
