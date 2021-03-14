@@ -1,0 +1,43 @@
+html {
+  font-size: 62.5%;
+}
+
+body {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  font-family: "Franklin Gothic Medium", "Arial Narrow", Arial, sans-serif;
+  color: black;
+  background-color: #4b4747;
+  display: flex;
+  justify-content: center;
+}
+
+input {
+  text-align: center;
+  font-size: 2rem;
+  background-color: #383232;
+  border: none;
+  width: 8rem;
+  color: #b30303;
+  border-radius: 0.5rem;
+  outline: none;
+}
+
+.d3 {
+  display: flex;
+  flex-direction: column;
+  width: 25rem;
+}
+.d3__required {
+  display: flex;
+  flex-direction: column;
+}
+
+.--missing {
+  box-shadow: 0rem 0.5rem 0.5rem #b30303;
+}
+
+.--solved {
+  box-shadow: 0rem 0.5rem 0.5rem #03b30c;
+}/*# sourceMappingURL=style.css.map */
