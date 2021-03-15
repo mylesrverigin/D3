@@ -129,15 +129,43 @@ export class D3Calc {
         }
         const awgSize = d3Index[resultIdx];
         const lowerAWG = d3Index[resultIdx-1];
-        console.log(`sizes ${lowerAWG}, ${awgSize}`);
+        // check if table is giving wires that cant actually be used 
+        // if not finds a size that can work
+        if (this.checkWireCapability(awgSize) == false){
+            // find the next size that works
+            let awgSize = this.getPossibleSize(this.amps);
+            // find index of awg in d3 table
+            let resultIdx = d3Index.findIndex(element => element == awgSize);
+            this.missingAwgFinalCheck(awgSize,d3Values[resultIdx]);
+            return [awgSize,this.calcDistance];
+        }
+        ///
         if (this.missingAwgFinalCheck(lowerAWG,d3Values[resultIdx-1])) {
-            console.log('not skipping')
             return [lowerAWG,this.calcDistance];
         }else {
             // use known working size
             this.missingAwgFinalCheck(awgSize,d3Values[resultIdx]);
             return [awgSize,this.calcDistance];
         }
+    }
+
+    getPossibleSize(loadamps){
+        /* Used to Find AWG size that works if load amps is greater then wire can handle
+        inputs:
+            loadamps: how much the wire needs to handle
+
+        returns: awg and d3 amps
+        */
+        let awg;
+        for (let i=0;i<t3['awg'].length;i++) {
+            let curAwg = t3['awg'][i];
+            let curamps = this.lookupAmpacity(curAwg);
+            if (curamps >= loadamps){
+                awg = curAwg;
+                break;
+            }
+        }
+        return awg;
     }
 
     missingAwgFinalCheck(awgSize,d3Value) {
@@ -194,6 +222,22 @@ export class D3Calc {
         return awgAmps;
     }
 
+    checkWireCapability(awg){
+        /* Checks if wire can handle the load returns bool */
+        const awgAmpacity = this.lookupAmpacity(awg);
+        let res = this.isOverLoaded(awgAmpacity) ? false : true;
+        return res;
+    }
+
+    isOverLoaded(awgamps){
+        /*Checks if wire is overloaded or not  returns bool over loaded returns true*/
+        let load = Math.ceil((this.amps/awgamps)*100);
+        if (load > 100){
+            return true
+        }
+        return false
+    }
+
     getloadFactor(awgAmps) {
         /*Goes to the dcf table given ampacity and awg amps 
         
@@ -201,8 +245,6 @@ export class D3Calc {
             awgAmps: the amps the cable can handle 
             this.amps: the amps of load 
         */
-        console.log(awgAmps);
-        // TODO when wire can't handle load go to next size up
         const loadRating = Math.ceil((this.amps/awgAmps)*100);
         let idx;
         for (idx=0;idx<dcf['index'].length;idx++){
@@ -211,7 +253,6 @@ export class D3Calc {
             }
         }
         const rowkey = dcf['index'][idx];
-        console.log(rowkey);
         this.dcf = dcf[rowkey][this.conInsulationTemp];
     }
 

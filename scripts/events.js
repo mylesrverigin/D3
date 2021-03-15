@@ -15,7 +15,6 @@ class Events {
     addEvent(event){
         // Adds event to the class
         this.event = event;
-        console.log('Added event')
     }
 
     handleclick(){
@@ -38,7 +37,6 @@ class Events {
         }else if (retVals.length === 2){
             modifyElementValue(retVals[0],'awg');
             modifySolved(true,'awg');
-            modifySolved(true,'distance');
         }
     }
 
